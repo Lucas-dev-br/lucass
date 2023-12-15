@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import numpy as np
 
 # Load data from CSV
 file_path = "produto.csv"  # Replace with the actual file path
@@ -12,7 +13,7 @@ except FileNotFoundError:
 
 # Adicionar coluna de pct_lucro para cada produto em cada cidade
 for city in df_product_prices.columns[2:6]:
-    df_product_prices[f'{city}_pct_lucro'] = ((df_product_prices[city] - df_product_prices['farmprice']) / df_product_prices['farmprice']) * 100
+    df_product_prices[f'{city}_pct_lucro'] = ((df_product_prices[city] - df_product_prices['farmprice']) / df_product_prices['farmprice']).replace([np.inf, -np.inf], np.nan) * 100
 
 # Display the data
 st.title("Análise de Produtos e Preços")

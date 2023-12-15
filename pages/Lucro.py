@@ -13,56 +13,50 @@ except FileNotFoundError:
 
 # Adicionar coluna de pct_lucro para cada produto em cada cidade
 for city in df_product_prices.columns[2:6]:
-    df_product_prices[f'{city}_pct_lucro'] = ((df_product_prices[city] - df_product_prices['farmprice']) / df_product_prices['farmprice']).replace([np.inf, -np.inf], np.nan) * 100
+    df_product_prices[f'{city}_pct_lucro'] = np.where(df_product_prices['farmprice'] != 0,
+                                                      ((df_product_prices[city] - df_product_prices['farmprice']) / df_product_prices['farmprice']).replace([np.inf, -np.inf], np.nan) * 100,
+                                                      np.nan)
 
 # Display the data
 st.title("Análise de Produtos e Preços")
-st.subheader("Preview of the Data:")
-st.write(df_product_prices.head())
+st.write(
+    "Esta análise utiliza dados sobre produtos e preços. "
+    "Os dados contêm informações sobre o nome do produto, data, preço na fazenda, preço no varejo em diferentes cidades, e informações sobre os preços médios."
+)
 
-# Interactive filter for selecting products
-selected_product = st.selectbox("Select a Product:", df_product_prices['productname'].unique())
+total_produto_precos = df_product_prices.shape[0]
+total_colunas_produto_precos = df_product_prices.shape[1]
+st.subheader(f"Total de Produtos e Preços")
+st.write(f"Total de produtos e preços: {total_produto_precos}")
+st.write(f"Total de colunas na tabela: {total_colunas_produto_precos}")
 
-# Filter data for the selected product
-filtered_data = df_product_prices[df_product_prices['productname'] == selected_product]
+st.header("Dados Completos de Produtos e Preços")
+st.write(df_product_prices)
 
-# Visualization options
-visualization_option = st.radio("Select Visualization Type:", ["Line Chart", "Bar Chart", "Scatter Plot"])
+st.header("Análise de Preços por Produto")
+produtos = df_product_prices['productname'].unique()
+produto_selecionado = st.selectbox("Selecione um produto:", produtos)
 
-# Interactive filter for selecting cities
-selected_cities = st.multiselect("Select Cities:", df_product_prices.columns[2:6])
+df_produto_selecionado = df_product_prices[df_product_prices['productname'] == produto_selecionado]
 
-# Plot selected visualization
-st.subheader(f"{visualization_option} for {selected_product} in Selected Cities:")
-if visualization_option == "Line Chart":
-    fig = px.line(filtered_data, x='date', y=selected_cities, title=f"{selected_product} Prices Over Time")
-elif visualization_option == "Bar Chart":
-    fig = px.bar(filtered_data, x='date', y=selected_cities, title=f"{selected_product} Prices Over Time")
-elif visualization_option == "Scatter Plot":
-    fig = px.scatter(filtered_data, x='date', y=selected_cities, title=f"{selected_product} Prices Over Time")
+st.subheader(f"Informações sobre {produto_selecionado}")
+st.write(df_produto_selecionado)
 
-# Show the interactive chart
-st.plotly_chart(fig)
+st.subheader("Informações sobre as Colunas")
+st.write("""
+- productname: Nome do produto.
+- date: Data do registro.
+- farmprice: Preço na fazenda.
+- atlantaretail: Preço no varejo em Atlanta.
+- chicagoretail: Preço no varejo em Chicago.
+- losangelesretail: Preço no varejo em Los Angeles.
+- newyorkretail: Preço no varejo em Nova York.
+- averagespread: Média dos preços no varejo.
+""")
 
-# Summary statistics
-st.subheader("Summary Statistics:")
-if selected_cities:
-    st.write(filtered_data[selected_cities].describe())
-else:
-    st.warning("Please select at least one city for summary statistics.")
+total_colunas_produto_precos = df_product_prices.shape[1]
+total_linhas_produto_precos = df_product_prices.shape[0]
 
-# Comparar a média de lucros dos produtos em cada cidade
-st.header("Comparação da Média de Lucros dos Produtos em Cada Cidade:")
-if selected_cities:
-    avg_profit_comparison = filtered_data.groupby(selected_cities).mean()[[f'{city}_pct_lucro' for city in selected_cities]].reset_index()
-    fig_avg_profit_comparison = px.bar(avg_profit_comparison, x=selected_cities, y=[f'{city}_pct_lucro' for city in selected_cities], title="Comparação da Média de Lucros")
-    st.plotly_chart(fig_avg_profit_comparison)
-else:
-    st.warning("Please select at least one city for profit comparison.")
-
-# Média de preço dos produtos com maiores average spread
-st.header("Média de Preço dos Produtos com Maiores Average Spread:")
-top_products_by_avg_spread = df_product_prices.groupby('productname')['averagespread'].max().nlargest(5).index
-avg_price_top_products = df_product_prices[df_product_prices['productname'].isin(top_products_by_avg_spread)].groupby('productname').mean().reset_index()
-fig_avg_price_top_products = px.bar(avg_price_top_products, x='productname', y=selected_cities, title="Média de Preço dos Produtos com Maiores Average Spread")
-st.plotly_chart(fig_avg_price_top_products)
+st.subheader("Total de Colunas, Linhas e Tabelas")
+st.write(f"Total de colunas na tabela: {total_colunas_produto_precos}")
+st.write(f"Total de linhas na tabela: {total_linhas_produto_precos}")

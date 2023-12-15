@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 
+# Link para o conjunto de dados no Kaggle
+dataset_link = "https://www.kaggle.com/datasets/everydaycodings/produce-prices-dataset/"
+
 df_product_prices = pd.read_csv('produto.csv')
 
 st.title("Análise de Produtos e Preços")
@@ -55,3 +58,7 @@ st.write(
     "No contexto dos dados analisados, observamos a dinâmica dos preços de diferentes produtos em várias cidades, "
     "capturando uma pequena parte da complexa história do comércio."
 )
+
+# Adicionando link para o Kaggle
+st.subheader("Conjunto de Dados no Kaggle:")
+st.write(f"O conjunto de dados foi obtido no Kaggle. Você pode acessá-lo [aqui]({dataset_link}).")

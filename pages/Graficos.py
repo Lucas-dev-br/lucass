@@ -41,4 +41,7 @@ st.plotly_chart(fig)
 
 # Summary statistics
 st.subheader("Summary Statistics:")
-st.write(filtered_data[selected_cities].describe())
+if selected_cities:
+    st.write(filtered_data[selected_cities].describe())
+else:
+    st.warning("Please select at least one city for summary statistics.")

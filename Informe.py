@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-
 df_product_prices = pd.read_csv('produto.csv')
 
 st.title("Análise de Produtos e Preços")
@@ -46,3 +45,13 @@ total_linhas_produto_precos = df_product_prices.shape[0]
 st.subheader("Total de Colunas, Linhas e Tabelas")
 st.write(f"Total de colunas na tabela: {total_colunas_produto_precos}")
 st.write(f"Total de linhas na tabela: {total_linhas_produto_precos}")
+
+# Adicionando um pouco sobre a história do comércio
+st.header("História do Comércio:")
+st.write(
+    "O comércio é uma parte fundamental da história da humanidade, remontando aos tempos mais antigos. "
+    "Desde as rotas comerciais da Antiguidade até os modernos mercados globais, o comércio desempenhou um papel vital "
+    "no intercâmbio de bens e culturas entre diferentes regiões. "
+    "No contexto dos dados analisados, observamos a dinâmica dos preços de diferentes produtos em várias cidades, "
+    "capturando uma pequena parte da complexa história do comércio."
+)
